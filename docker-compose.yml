@@ -1,0 +1,33 @@
+services:
+  catalogue:
+    build: .
+    command: ["node", "dist/services/catalogue/src/index.js"]
+    environment:
+      PORT: 3001
+
+  inventory:
+    build: .
+    command: ["node", "dist/services/inventory/src/index.js"]
+    environment:
+      PORT: 3002
+
+  orders:
+    build: .
+    command: ["node", "dist/services/orders/src/index.js"]
+    environment:
+      PORT: 3003
+
+  gateway:
+    build: .
+    command: ["node", "dist/services/gateway/src/index.js"]
+    environment:
+      PORT: 8080
+      CATALOGUE_URL: http://catalogue:3001
+      INVENTORY_URL: http://inventory:3002
+      ORDERS_URL: http://orders:3003
+    ports:
+      - "8080:8080"
+    depends_on:
+      - catalogue
+      - inventory
+      - orders
