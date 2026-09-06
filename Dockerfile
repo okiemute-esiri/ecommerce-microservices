@@ -5,10 +5,12 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine
+FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 COPY --from=build /app/package*.json ./
-RUN npm install --omit=dev
+RUN npm install --omit=dev && npm cache clean --force
 COPY --from=build /app/dist ./dist
+USER node
+EXPOSE 8080
 CMD ["node", "dist/services/gateway/src/index.js"]
